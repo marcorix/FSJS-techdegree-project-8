@@ -26,27 +26,22 @@ app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+  const err = new Error();
+  err.status = 404;
+  err.message = 'Oh no! Something went wrong, please try again.';
+  res.status(404).render('page-not-found', err);
 });
 
-// error handler
+// Global error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  err.status = 500;
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
-// (async () => {
-//   try {
-//     await sequelize.authenticate();
-//     console.log('Connection to the database successful!');
-//   } catch (error) {
-//     console.error('Error connecting to the database: ', error);
-//   }
-// })();
+  res.status(err.status || 500);
+  res.render('error', err);
+});
 
 module.exports = app;

@@ -14,6 +14,13 @@ const asyncHandler = (cb) => {
   };
 };
 
+//Error handler function
+const errHandler = (errStatus, msg) => {
+  const err = new Error(msg);
+  err.status = errStatus;
+  throw err;
+};
+
 /* GET home page. */
 // Home route should redirect to the /books route
 router.get(
@@ -60,7 +67,11 @@ router.get(
   asyncHandler(async (req, res, next) => {
     const book = await Book.findByPk(req.params.id);
     // console.log(book);
-    res.render('update-book', { book, title: 'Update Book' });
+    if (book) {
+      res.render('update-book', { book, title: 'Update Book' });
+    } else {
+      errHandler(404, 'Page not found! Please try again.');
+    }
   })
 );
 
