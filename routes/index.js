@@ -36,32 +36,54 @@ router.get(
 
 /* GET books/new page. */
 // Shows the create new book form
-router.get('/books/new', async function (req, res, next) {
-  res.render('index', { title: 'Clara ti amo' });
-});
+router.get(
+  '/books/new',
+  asyncHandler(async (req, res, next) => {
+    res.render('new-book', { title: 'New Book' });
+  })
+);
 
 /* POST books/new page. */
 // Posts a new book to the database
-router.post('/books/new', async function (req, res, next) {
-  res.render('index', { title: 'Clara ti amo' });
-});
+router.post(
+  '/books/new',
+  asyncHandler(async (req, res, next) => {
+    await Book.create(req.body);
+    res.redirect('/books');
+  })
+);
 
 /* GET Books/:id page. */
 // Shows book detail form
-router.get('/books/:id', async function (req, res, next) {
-  res.render('index', { title: 'Clara ti amo' });
-});
+router.get(
+  '/books/:id',
+  asyncHandler(async (req, res, next) => {
+    const book = await Book.findByPk(req.params.id);
+    // console.log(book);
+    res.render('update-book', { book, title: 'Update Book' });
+  })
+);
 
 /* POST Books/:id page. */
 // Updates book info in the database
-router.post('/books/:id', async function (req, res, next) {
-  res.render('index', { title: 'Clara ti amo' });
-});
+router.post(
+  '/books/:id',
+  asyncHandler(async (req, res, next) => {
+    const book = await Book.findByPk(req.params.id);
+    await book.update(req.body);
+    res.redirect('/books');
+  })
+);
 
 /* POST Books page. */
-router.post('/books/:id/delete', async function (req, res, next) {
-  const books = await Book.findAll();
-  res.render('index', { title: 'Clara ti amo' });
-});
+// Deletes a book
+router.post(
+  '/books/:id/delete',
+  asyncHandler(async (req, res, next) => {
+    const book = await Book.findByPk(req.params.id);
+    await book.destroy();
+    res.redirect('/books');
+  })
+);
 
 module.exports = router;
