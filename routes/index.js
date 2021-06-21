@@ -55,7 +55,9 @@ router.get(
 router.post(
   '/books/new',
   asyncHandler(async (req, res, next) => {
-    await Book.create(req.body);
+    // controllare quiiiiiiiiiiiiiiiiiiiiiiiiiiii
+    console.log(req.body);
+    // await Book.create(req.body);
     res.redirect('/books');
   })
 );
