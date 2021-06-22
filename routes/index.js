@@ -14,13 +14,6 @@ const asyncHandler = (cb) => {
   };
 };
 
-//Error handler function
-const errHandler = (errStatus, msg) => {
-  const err = new Error(msg);
-  err.status = errStatus;
-  throw err;
-};
-
 /* GET home page. */
 // Home route should redirect to the /books route
 router.get(
@@ -55,10 +48,23 @@ router.get(
 router.post(
   '/books/new',
   asyncHandler(async (req, res, next) => {
-    // controllare quiiiiiiiiiiiiiiiiiiiiiiiiiiii
-    console.log(req.body);
-    // await Book.create(req.body);
-    res.redirect('/books');
+    let book;
+    try {
+      book = await Book.create(req.body);
+      res.redirect('/books');
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError') {
+        // checking the error
+        book = await Book.build(req.body);
+        res.render('new-book', {
+          book,
+          errors: error.errors,
+          title: 'New Book',
+        });
+      } else {
+        throw error; // error caught in the asyncHandler's catch block
+      }
+    }
   })
 );
 
@@ -72,7 +78,8 @@ router.get(
     if (book) {
       res.render('update-book', { book, title: 'Update Book' });
     } else {
-      errHandler(404, 'Page not found! Please try again.');
+      res.render('page-not-found');
+      res.sendStatus(404);
     }
   })
 );
@@ -83,8 +90,12 @@ router.post(
   '/books/:id',
   asyncHandler(async (req, res, next) => {
     const book = await Book.findByPk(req.params.id);
-    await book.update(req.body);
-    res.redirect('/books');
+    if (book) {
+      await book.update(req.body);
+      res.redirect('/books');
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 
@@ -94,8 +105,12 @@ router.post(
   '/books/:id/delete',
   asyncHandler(async (req, res, next) => {
     const book = await Book.findByPk(req.params.id);
-    await book.destroy();
-    res.redirect('/books');
+    if (book) {
+      await book.destroy();
+      res.redirect('/books');
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 

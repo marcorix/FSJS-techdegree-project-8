@@ -1,6 +1,8 @@
 extends layout
 
 block content
+    include errors
+    
     h1= title
     form(method='POST', action='/books/new')
         p 
@@ -18,4 +20,4 @@ block content
         p 
             input(type='submit', value='Create a New Book')
         p 
-            a.button(href='/books')
+            a.button(href='/books') Cancel
