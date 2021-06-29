@@ -30,6 +30,7 @@ app.use(function (req, res, next) {
   err.status = 404;
   err.message = 'Oh no! Something went wrong, please try again.';
   res.status(404).render('page-not-found', err);
+  console.log(err.message);
 });
 
 // Global error handler

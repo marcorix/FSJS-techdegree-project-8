@@ -78,8 +78,10 @@ router.get(
     if (book) {
       res.render('update-book', { book, title: 'Update Book' });
     } else {
-      res.render('page-not-found');
-      res.sendStatus(404);
+      const err = new Error();
+      err.status = 404;
+      err.message = "Looks like the book doesn't exist";
+      next(err);
     }
   })
 );
