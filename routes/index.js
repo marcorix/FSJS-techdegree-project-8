@@ -80,8 +80,8 @@ router.get(
     } else {
       const err = new Error();
       err.status = 404;
-      err.message = "Looks like the book doesn't exist";
-      next(err);
+      err.message = 'Page not found! Please try again.';
+      throw err; // error caught in the asyncHandler's catch block
     }
   })
 );
